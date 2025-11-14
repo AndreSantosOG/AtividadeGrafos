@@ -113,6 +113,63 @@ function percurso_valido(grafo, caminho) {
   }
   return true;
 }
+function bfs(grafo, inicio) {
+  if (!(inicio in grafo)) {
+    console.log("Vértice inicial não existe no grafo.");
+    return;
+  }
+
+  let fila = [inicio];
+  let visitados = [];
+
+  while (fila.length > 0) {
+    const atual = fila.shift();
+
+    if (!visitados.includes(atual)) {
+      visitados.push(atual);
+
+      const vizinhos = grafo[atual];
+      for (let v of vizinhos) {
+        if (!visitados.includes(v) && !fila.includes(v)) {
+          fila.push(v);
+        }
+      }
+    }
+  }
+
+  console.log("BFS (ordem de visita): " + visitados.join(" -> "));
+}
+function menor_caminho_bfs(grafo, inicio, destino) {
+  if (!(inicio in grafo) || !(destino in grafo)) {
+    console.log("Vértice inicial ou destino não existe no grafo.");
+    return;
+  }
+
+  let fila = [{ vertice: inicio, caminho: [inicio] }];
+  let visitados = new Set();
+
+  while (fila.length > 0) {
+    const { vertice, caminho } = fila.shift();
+
+    if (vertice === destino) {
+      console.log("Menor caminho encontrado: " + caminho.join(" -> "));
+      return caminho;
+    }
+
+    if (!visitados.has(vertice)) {
+      visitados.add(vertice);
+
+      for (let vizinho of grafo[vertice]) {
+        if (!visitados.has(vizinho)) {
+          fila.push({ vertice: vizinho, caminho: [...caminho, vizinho] });
+        }
+      }
+    }
+  }
+
+  console.log("Não existe caminho entre " + inicio + " e " + destino);
+  return [];
+}
 
 function main() {
   let grafo = criar_grafo();
@@ -131,6 +188,8 @@ function main() {
     7 - Verificar Aresta
     8 - Calcular Graus
     9 - Verificar Percurso
+    10 - BFS (Busca em Largura)
+    11 - BFS (Menor Caminho )
     0 - Sair
     `);
 
@@ -186,6 +245,15 @@ function main() {
             ? "Percurso válido!"
             : "Percurso inválido!"
         );
+        break;
+      case "10":
+        const inicio = prompt("Vértice inicial da BFS: ");
+        bfs(grafo, inicio);
+        break;
+      case "11":
+        const inicioC = prompt("Vértice inicial: ");
+        const destinoC = prompt("Vértice destino: ");
+        menor_caminho_bfs(grafo, inicioC, destinoC);
         break;
       case "0":
         console.log("Saindo...");
