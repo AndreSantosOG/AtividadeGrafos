@@ -170,6 +170,69 @@ function menor_caminho_bfs(grafo, inicio, destino) {
   console.log("Não existe caminho entre " + inicio + " e " + destino);
   return [];
 }
+function dfs(grafo, inicio) {
+  if (!(inicio in grafo)) {
+    console.log("Vértice inicial não existe no grafo.");
+    return;
+  }
+
+  let visitados = new Set();
+  let ordem = [];
+
+  function visitar(v) {
+    visitados.add(v);
+    ordem.push(v);
+
+    for (let vizinho of grafo[v]) {
+      if (!visitados.has(vizinho)) {
+        visitar(vizinho);
+      }
+    }
+  }
+
+  visitar(inicio);
+  console.log("DFS (ordem de visita): " + ordem.join(" -> "));
+}
+function existe_ciclo(grafo, nao_direcionado = false) {
+  let visitado = new Set();
+  let pilha = new Set();
+
+  function dfs(v, pai = null) {
+    visitado.add(v);
+    pilha.add(v);
+
+    for (let vizinho of grafo[v]) {
+      if (nao_direcionado) {
+        if (!visitado.has(vizinho)) {
+          if (dfs(vizinho, v)) return true;
+        } else if (vizinho !== pai) {
+          return true; // ciclo!
+        }
+      }
+
+      else {
+        if (!visitado.has(vizinho)) {
+          if (dfs(vizinho)) return true;
+        } else if (pilha.has(vizinho)) {
+          return true; 
+        }
+      }
+    }
+
+    pilha.delete(v);
+    return false;
+  }
+
+  for (let v of Object.keys(grafo)) {
+    if (!visitado.has(v)) {
+      if (dfs(v)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
 
 function main() {
   let grafo = criar_grafo();
@@ -190,6 +253,8 @@ function main() {
     9 - Verificar Percurso
     10 - BFS (Busca em Largura)
     11 - BFS (Menor Caminho )
+    12 - DFS (Busca em Profundidade)
+    13 - Verificar Ciclos (DFS)
     0 - Sair
     `);
 
@@ -254,6 +319,15 @@ function main() {
         const inicioC = prompt("Vértice inicial: ");
         const destinoC = prompt("Vértice destino: ");
         menor_caminho_bfs(grafo, inicioC, destinoC);
+        break;
+      case "12":
+        const inicioDFS = prompt("Vértice inicial da DFS: ");
+        dfs(grafo, inicioDFS);
+        break;
+
+      case "13":
+        const possuiCiclo = existe_ciclo(grafo, !direcionado);
+        console.log(possuiCiclo ? "O grafo possui ciclo!" : "O grafo NÃO possui ciclo.");
         break;
       case "0":
         console.log("Saindo...");
