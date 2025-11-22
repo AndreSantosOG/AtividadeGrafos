@@ -206,7 +206,7 @@ function existe_ciclo(grafo, nao_direcionado = false) {
         if (!visitado.has(vizinho)) {
           if (dfs(vizinho, v)) return true;
         } else if (vizinho !== pai) {
-          return true; // ciclo!
+          return true;
         }
       }
 
@@ -339,3 +339,4 @@ function main() {
 }
 
 main();
+
